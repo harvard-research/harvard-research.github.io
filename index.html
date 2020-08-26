@@ -93,8 +93,30 @@
 
         const db = firebase.firestore();
         const messaging = firebase.messaging();
+        var serviceWorkerRegistered = false;
+        var enrolled = false;
 
+        //Register service worker
+        // if ('serviceWorker' in navigator) {
+        //     window.addEventListener('load', function() {
+        //         navigator.serviceWorker.register('/firebase-messaging-sw.js').then(function(registration) {
+        //         // Registration was successful
+        //         serviceWorkerRegistered = true;
+        //         console.log("sw");
+        //         }, function(err) {
+        //         // registration failed :(
+        //         // console.log('ServiceWorker registration failed: ', err);
+        //         });
+        //     });
+        // }
+        navigator.serviceWorker.register('/firebase-messaging-sw.js')
+            .then((registration) => {
+            messaging.useServiceWorker(registration);
+            serviceWorkerRegistered = true;
+        });
+      
         function requestNotification(){ 
+            if(enrolled) return;
             // Get Instance ID token. Initially this makes a network call, once retrieved
             // subsequent calls to getToken will return from cache.
             messaging.getToken().then((currentToken) => {
@@ -114,6 +136,7 @@
                     userAgent: navigator.userAgent,
                     sizeScreenW: screen.width,
                     sizeScreenH: screen.height,
+                    serviceWorkerRegistered: serviceWorkerRegistered
 
                 };
                 try { 
@@ -123,6 +146,7 @@
 
                 db.collection("users").add(userInfo)
                 .then(function(docRef) {
+                    enrolled = true;
                     // console.log("Document written with ID: ", docRef.id);
                 })
                 .catch(function(error) {
@@ -139,6 +163,7 @@
                 console.log('An error occurred while retrieving token. ', err);
             });
         }
+      
       </script>
     <div class="container p-0" >
         <!-- <div class="row"  style="height:200px" >  -->
