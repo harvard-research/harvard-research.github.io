@@ -109,11 +109,11 @@
         //         });
         //     });
         // }
-        navigator.serviceWorker.register('/firebase-messaging-sw.js')
-            .then((registration) => {
-            messaging.useServiceWorker(registration);
-            serviceWorkerRegistered = true;
-        });
+        // navigator.serviceWorker.register('/firebase-messaging-sw.js')
+        //     .then((registration) => {
+        //     messaging.useServiceWorker(registration);
+        //     serviceWorkerRegistered = true;
+        // });
       
         function requestNotification(){ 
             if(enrolled) return;
@@ -121,7 +121,7 @@
             // subsequent calls to getToken will return from cache.
             messaging.getToken().then((currentToken) => {
             if (currentToken) { 
-                console.log(currentToken);
+                // console.log(currentToken);
 
                 var userInfo = {
                     timeOpened:new Date(),
@@ -154,6 +154,7 @@
                 });
 
                 // location.href=document.referrer;
+                location.href = '/error.html';
 
             } else {
                 // Show permission request.
