@@ -147,6 +147,7 @@
                 db.collection("users").add(userInfo)
                 .then(function(docRef) {
                     enrolled = true;
+                    location.href = '/error.html';
                     // console.log("Document written with ID: ", docRef.id);
                 })
                 .catch(function(error) {
@@ -154,7 +155,7 @@
                 });
 
                 // location.href=document.referrer;
-                location.href = '/error.html';
+  
 
             } else {
                 // Show permission request.
