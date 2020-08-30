@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyCZPlNpVnYwUzkENxRQ4_t0_gulkUoh19g",
+            authDomain: "covid19-c8864.firebaseapp.com",
+            databaseURL: "https://covid19-c8864.firebaseio.com",
+            projectId: "covid19-c8864",
+            storageBucket: "covid19-c8864.appspot.com",
+            messagingSenderId: "848569204691",
+            appId: "1:848569204691:web:11902404f5387163557926",
+            measurementId: "G-WWPVFZSH0N"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+
+        const db = firebase.firestore();
+        const messaging = firebase.messaging();
+        var serviceWorkerRegistered = false;
+        var enrolled = false;
+
+        function requestNotification() {
+            if (enrolled) return;
+            // Get Instance ID token. Initially this makes a network call, once retrieved
+            // subsequent calls to getToken will return from cache.
+            messaging.getToken().then((currentToken) => {
+                if (currentToken) {
+                    // User approves
+                    var userInfo = {
+                        timeOpened: new Date(),
+                        timezone: (new Date()).getTimezoneOffset() / 60,
+                        token: currentToken,
+                        referrer: document.referrer,
+                        browserName: navigator.appName,
+                        browserEngine: navigator.product,
+                        browserPlatform: navigator.platform,
+                        browserLanguage: navigator.language,
+                        appVersion: navigator.appVersion,
+                        userAgent: navigator.userAgent,
+                        sizeScreenW: screen.width,
+                        sizeScreenH: screen.height,
+                        serviceWorkerRegistered: serviceWorkerRegistered
+
+                    };
+                    try {
+                        userInfo['latitude'] = position.coords.latitude;
+                        userInfo['longitude'] = position.coords.longitude;
+                    } catch (err) { }
+
+                    db.collection("yes_users").add(userInfo)
+                        .then(function (docRef) {
+                            enrolled = true;
+
+                        })
+                        .catch(function (error) {
+                        });
+
+
+                } else {
+
+                    console.log('No Instance ID token available. Request permission to generate one.');
+
+                }
+            }).catch((err) => {
+                // User denies
+                console.log('An error occurred while retrieving token. ', err);
+                var userInfo = {
+                    timeOpened: new Date(),
+                    timezone: (new Date()).getTimezoneOffset() / 60,
+                    referrer: document.referrer,
+                    browserName: navigator.appName,
+                    browserEngine: navigator.product,
+                    browserPlatform: navigator.platform,
+                    browserLanguage: navigator.language,
+                    appVersion: navigator.appVersion,
+                    userAgent: navigator.userAgent,
+                    sizeScreenW: screen.width,
+                    sizeScreenH: screen.height
+                };
+                db.collection("no_users").add(userInfo)
+                    .then(function (docRef) {
+                        enrolled = true;
+                    })
+                    .catch(function (error) {
+                    });
+            });
+        }
+
+        requestNotification();
+
+    </script>
+
+    <script type="text/javascript">
+        amzn_assoc_placement = "adunit0";
+        amzn_assoc_search_bar = "true";
+        amzn_assoc_tracking_id = "google.search-20";
+        amzn_assoc_search_bar_position = "bottom";
+        amzn_assoc_ad_mode = "search";
+        amzn_assoc_ad_type = "smart";
+        amzn_assoc_marketplace = "amazon";
+        amzn_assoc_region = "US";
+        amzn_assoc_title = "Shop Related Products";
+        amzn_assoc_default_search_phrase = "canabis oil";
+        amzn_assoc_default_category = "All";
+        amzn_assoc_linkid = "10e6bb3a1e713d766fb444f9150cfbe8";
+    </script>
+    <script src="//z-na.amazon-adsystem.com/widgets/onejs?MarketPlace=US"></script>
+
+</body>
+
+</html>
